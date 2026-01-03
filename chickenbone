@@ -1,3 +1,69 @@
+-- KEY SYSTEM TEMPLATE
+-- Made by: mavrokt on Roblox
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local CORRECT_KEY = "mavrokt-the-hacker42"
+local unlocked = false
+
+-- Key GUI
+local keyGui = Instance.new("ScreenGui")
+keyGui.Name = "KeyGUI"
+keyGui.ResetOnSpawn = false
+keyGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame", keyGui)
+frame.Size = UDim2.new(0, 300, 0, 150)
+frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+frame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,12)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,35)
+title.BackgroundTransparency = 1
+title.Text = "Enter Key"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+
+local box = Instance.new("TextBox", frame)
+box.Size = UDim2.new(0,240,0,35)
+box.Position = UDim2.new(0.5,-120,0.45,0)
+box.PlaceholderText = "Key here..."
+box.Text = ""
+box.BackgroundColor3 = Color3.fromRGB(15,15,15)
+box.TextColor3 = Color3.new(1,1,1)
+box.Font = Enum.Font.Gotham
+box.TextSize = 14
+box.ClearTextOnFocus = false
+Instance.new("UICorner", box).CornerRadius = UDim.new(0,8)
+
+local submit = Instance.new("TextButton", frame)
+submit.Size = UDim2.new(0,140,0,32)
+submit.Position = UDim2.new(0.5,-70,0.75,0)
+submit.Text = "UNLOCK"
+submit.Font = Enum.Font.GothamBold
+submit.TextSize = 14
+submit.TextColor3 = Color3.new(1,1,1)
+submit.BackgroundColor3 = Color3.fromRGB(0,170,0)
+Instance.new("UICorner", submit).CornerRadius = UDim.new(0,8)
+
+submit.MouseButton1Click:Connect(function()
+	if box.Text == CORRECT_KEY then
+		unlocked = true
+		keyGui:Destroy()
+		print("Key accepted")
+	else
+		box.Text = ""
+		box.PlaceholderText = "Wrong key"
+	end
+end)
+
+-- 🔽 WAIT UNTIL KEY IS CORRECT
+repeat task.wait() until unlocked
+
 -- TEMPLATE ONLY
 -- Equips tool named "Paintball Gun"
 -- Made by: mavrokt on Roblox
@@ -109,3 +175,4 @@ UIS.InputChanged:Connect(function(input)
 		)
 	end
 end)
+
