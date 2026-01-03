@@ -1,0 +1,113 @@
+-- UI TEMPLATE ONLY
+-- Black draggable frame with Activate button
+-- Made by: mavrokt on Roblox
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+
+-- ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "TemplateGUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 320, 0, 195)
+frame.Position = UDim2.new(0.5, -160, 0.5, -97)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+-- Rounded corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = frame
+
+-- Title (drag handle)
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 38)
+title.BackgroundTransparency = 1
+title.Text = "Paintball Template"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.Parent = frame
+
+-- Activate Button
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 200, 0, 45)
+button.Position = UDim2.new(0.5, -100, 0.55, 0)
+button.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+button.Text = "ACTIVATE"
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.GothamBold
+button.TextSize = 16
+button.AutoButtonColor = false
+button.Parent = frame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 10)
+btnCorner.Parent = button
+
+-- Credit Text
+local credit = Instance.new("TextLabel")
+credit.Size = UDim2.new(1, -10, 0, 20)
+credit.Position = UDim2.new(0, 5, 1, -22)
+credit.BackgroundTransparency = 1
+credit.Text = "Made by: mavrokt on Roblox"
+credit.TextColor3 = Color3.fromRGB(150, 150, 150)
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 12
+credit.TextXAlignment = Enum.TextXAlignment.Center
+credit.Parent = frame
+
+-- Toggle state (template)
+local enabled = false
+
+button.MouseButton1Click:Connect(function()
+	enabled = not enabled
+	button.Text = enabled and "ENABLED" or "ACTIVATE"
+
+	TweenService:Create(
+		button,
+		TweenInfo.new(0.15, Enum.EasingStyle.Quad),
+		{BackgroundColor3 = enabled and Color3.fromRGB(30,30,30) or Color3.fromRGB(15,15,15)}
+	):Play()
+
+	print("Template toggled:", enabled)
+end)
+
+-- Draggable logic
+local dragging = false
+local dragStart
+local startPos
+
+title.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
+end)
+
+title.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
