@@ -1,34 +1,41 @@
--- SAFE CLIENT-SIDE TEMPLATE
+-- TEMPLATE ONLY
+-- Equips tool named "Paintball Gun"
 -- Made by: mavrokt on Roblox
 
 local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local Lighting = game:GetService("Lighting")
 
 local player = Players.LocalPlayer
 
 -- GUI
-local gui = Instance.new("ScreenGui", player.PlayerGui)
+local gui = Instance.new("ScreenGui")
+gui.Name = "PaintballTemplateGUI"
 gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
 
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0,320,0,195)
-frame.Position = UDim2.new(0.5,-160,0.5,-97)
-frame.BackgroundColor3 = Color3.new(0,0,0)
+-- Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 320, 0, 195)
+frame.Position = UDim2.new(0.5, -160, 0.5, -97)
+frame.BackgroundColor3 = Color3.fromRGB(0,0,0)
 frame.BorderSizePixel = 0
+frame.Parent = gui
 
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0,12)
 
-local title = Instance.new("TextLabel", frame)
+-- Title (drag handle)
+local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1,0,0,38)
 title.BackgroundTransparency = 1
-title.Text = "Paintball Lag Script"
+title.Text = "Paintball Gun"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
+title.Parent = frame
 
-local button = Instance.new("TextButton", frame)
+-- Activate Button (GREEN)
+local button = Instance.new("TextButton")
 button.Size = UDim2.new(0,200,0,45)
 button.Position = UDim2.new(0.5,-100,0.55,0)
 button.Text = "ACTIVATE"
@@ -37,9 +44,12 @@ button.TextSize = 16
 button.TextColor3 = Color3.new(1,1,1)
 button.BackgroundColor3 = Color3.fromRGB(0,170,0)
 button.AutoButtonColor = false
+button.Parent = frame
+
 Instance.new("UICorner", button).CornerRadius = UDim.new(0,10)
 
-local credit = Instance.new("TextLabel", frame)
+-- Credit
+local credit = Instance.new("TextLabel")
 credit.Size = UDim2.new(1,0,0,18)
 credit.Position = UDim2.new(0,0,1,-20)
 credit.BackgroundTransparency = 1
@@ -47,38 +57,55 @@ credit.Text = "Made by: mavrokt on Roblox"
 credit.TextColor3 = Color3.fromRGB(140,140,140)
 credit.Font = Enum.Font.Gotham
 credit.TextSize = 12
+credit.Parent = frame
 
--- Blur effect
-local blur = Instance.new("BlurEffect")
-blur.Size = 0
-blur.Parent = Lighting
-
-local enabled = false
-local connection
-
+-- Equip Paintball Gun
 button.MouseButton1Click:Connect(function()
-	enabled = not enabled
-	button.Text = enabled and "ENABLED" or "ACTIVATE"
+	local backpack = player:WaitForChild("Backpack")
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
 
+	local tool = backpack:FindFirstChild("Paintball Gun")
+		or character:FindFirstChild("Paintball Gun")
+
+	if tool and humanoid then
+		humanoid:EquipTool(tool)
+	end
+
+	-- button feedback
 	TweenService:Create(
 		button,
-		TweenInfo.new(0.15),
-		{BackgroundColor3 = enabled and Color3.fromRGB(0,200,0) or Color3.fromRGB(0,170,0)}
+		TweenInfo.new(0.12),
+		{BackgroundColor3 = Color3.fromRGB(0,200,0)}
 	):Play()
+end)
 
-	if enabled then
-		blur.Size = 6 -- light lag feel
-		connection = RunService.RenderStepped:Connect(function()
-			if workspace.CurrentCamera then
-				workspace.CurrentCamera.CFrame *=
-					CFrame.new(math.random(-1,1)*0.01, math.random(-1,1)*0.01, 0)
-			end
-		end)
-	else
-		blur.Size = 0
-		if connection then
-			connection:Disconnect()
-			connection = nil
-		end
+-- Draggable logic
+local dragging = false
+local dragStart, startPos
+
+title.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
+end)
+
+title.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
 	end
 end)
