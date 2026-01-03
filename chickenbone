@@ -4,7 +4,7 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-local CORRECT_KEY = "mavrokt-the-hacker42"
+local CORRECT_KEY = "thisisthekey96"
 local unlocked = false
 
 -- Key GUI
